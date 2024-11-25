@@ -1,0 +1,210 @@
+Proyecto Laravel de Productos
+
+El github del proyecto esta en:
+
+https://github.com/awais-vteams/laravel-crud-generator
+
+Como el proyecto se va a generar desde cero, lo hacemos con el asistente 
+
+Instalamos Laravel de manera global
+$ composer global config bin-dir --absolute
+
+Exportamos el Path
+  $ export PATH="$HOME/.composer/vendor/bin:$PATH"
+  $ export PATH="$HOME/.config/composer/vendor/bin:$PATH"
+
+Reiniciamos el shell
+	$ source ~/.bashrc}
+
+Probamos la verion de laravel
+	$ laravel --version
+
+Inicamos nuestro pporyecto
+	$ laravel new crud_producto
+
+Ingresamos a nuestro proyecto
+	$ cd crud_product
+
+Creamos nuestra BD
+	$ mysql -u klvst3r -p
+
+	En el RDBMS creamos nuestra BD
+	> create database laravel_crud
+
+Arrancamos en nuestro editor el proyecto y configuramos las variables de conexion con la bd previsamnete configurada y creada
+	
+	En el archivo .env
+		DB_CONNECTION=mysql
+		DB_HOST=127.0.0.1
+		DB_PORT=3306
+		DB_DATABASE=crud_product
+		DB_USERNAME=klvst3r
+		DB_PASSWORD=desarrollo
+
+Se crea el model o y la migracion desde la terminal
+	$ php artisan make:model Product -m
+El parametro -m nos crea la migracion  en plural 
+
+	Tenemos un modelo llamado 
+		Product.php
+
+	-y una migracion llamada 
+		2024_11_24_191453_create_products_table.php
+
+Se agragan los siguientes campos a la migracion:
+
+	 Schema::create('products', function (Blueprint $table) {
+            $table->id();
+            $table->string('description', 100);
+            $table->double('price', 8,2);
+            $table->integer('stock');
+            $table->timestamps();
+        });
+
+Se corre la migracion
+	$ php artisan migrate	
+
+Vamos a la Bd y actualizamos para visualizar la información
+
+Vamos a instalar el paquete via composer
+	$ composer require ibex/crud-generator --dev
+
+Publicamos las configuraciones
+	$ php artisan vender:publish --tag=crud
+
+Se va a generar el crud rapidamente
+	$ php artisan make:crud products
+
+Como ya se tiene el modelo creado nos indica que ya existe sobreescribimos por que no cargamos nada a nuestro modelo.
+
+Con esto se han creado el modelo, las vistas, el layout
+
+Ahora podemos revisar las vistas:
+Exusten ya las plantillas Blade que se tienen 
+
+Revisamos las rutas:
+	/routes/web.php
+
+Llamamos a nuestro controlador
+	ProductController
+
+Se crea una ruta que desencadene el controlador
+	Route::resource('products', ProductController::class);
+
+El paquete ya realizo todos los metodos del crud que se puede adaptar o modificar.
+
+
+Para las vistas vamos a ocupar el paquete Laravel UI
+Las vistas:
+	composer require laravel/ui
+
+Para 
+	$ php artisan ui bootstrap
+
+Layout Blade 
+	$ php artisan ui bootstrap --auth
+
+Cuidando de no reemplarzar el controlador de los productos existentes
+
+
+Ahora solicita correr 
+
+$ npm install & npm run dev
+
+
+Ahora vamos a ejecuatr nuestra aplicacion php
+
+	$ php artisan serve -port=8000
+
+Probamos la aplicaocin en el browser:
+	localhost:8000/
+
+Vemos el registro
+	localhost:8000/register
+
+Si no toma los estilos lo que hacemos es:
+	$ npm run build
+
+Ahora volvemos a levantar la aplicacion y verificamos
+
+Registramos el usuarios:
+Name: Klvst3r
+email: klvst3r@gmail.com
+pass: desarrollo
+
+Lo que nos permitira hacer el registro y acceso al dashboard con el usuario registrado
+
+Ahora podemos acceder a nuestra plantilla de products:
+
+	localhost:8000/products
+
+me marca el siguiente error en laravel:
+Illuminate \ Contracts \ Container \ BindingResolutionException
+PHP 8.1.31
+10.48.24
+Target class [ProductController] does not exist.
+
+
+El error "Target class [ProductController] does not exist" suele indicar que Laravel no puede encontrar el controlador especificado. 
+
+Esto puede ser causado por varias razones. ¿Podrías confirmar si el controlador ProductController está en la carpeta correcta (app/Http/Controllers)? Además, asegúrate de que el nombre del controlador esté bien escrito y que esté correctamente referenciado en las rutas. ¿Podemos delves un poco más en tu estructura de rutas para verificar cómo lo estás llamando?
+
+
+Lo solucione agregando los use respecctivos: 
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\HomeController;
+
+aunado a que se agrego la siguiente linea:
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Pero me indica una alerta subrayando Auth
+Auth::routes();
+Dentro de mi archivo routes/web.php
+
+Ahora, respecto al mensaje sobre Auth::routes(), la advertencia que mencionas probablemente esté relacionada con los cambios en Laravel 8 o superior, ya que a partir de Laravel 8, la manera en que se gestionan las rutas de autenticación ha cambiado ligeramente.
+Posible causa:
+
+En versiones de Laravel 8 y superiores, la función Auth::routes() ya no es necesaria si estás utilizando las rutas de autenticación predeterminadas. En lugar de eso, puedes utilizar el paquete de Laravel UI o Jetstream dependiendo de lo que hayas instalado para gestionar la autenticación.
+Solución 1: Usar Auth::routes() con Laravel UI
+
+Si quieres seguir utilizando el enfoque antiguo con Auth::routes(), asegúrate de tener instalado Laravel UI y sus dependencias.
+
+    Primero, instala Laravel UI si no lo has hecho:
+
+composer require laravel/ui
+
+Luego, genera las rutas de autenticación:
+
+php artisan ui bootstrap --auth
+
+Después de esto, deberías poder seguir utilizando Auth::routes() sin problemas.
+
+Volvemos a generar las utas de autenticacion:
+	i estás utilizando Laravel UI, asegúrate de instalarlo y generar las rutas de autenticación con
+	$ php artisan ui bootstrap --auth
+
+Ahora nuestro curd es totalmente funcional
+
+Creamos un nuevo producto
+
+Para subir al Github
+Creamos el repo de github
+Accesando a la carpeta y ejecutamos:
+
+	$ git remote add origin git@github.com:Klvst3r/crud_product.git
+	$ git branch -M main
+	$ git push -u origin main
+
+
+aunque ya teniendo el repositorio en Github, simplemente ejecutamos:
+
+echo "# crud_product" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin git@github.com:Klvst3r/crud_product.git
+git push -u origin main
